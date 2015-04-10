@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.horoscope" >
+
+    <!-- Required for fetching feed data. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <!-- Required to enable our SyncAdapter after it's created. -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!-- Required because we're manually creating a new account. -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".view.AllSignsActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".view.ForecastActivity"
+            android:label="@string/title_activity_horoscope" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.AllSignsActivity" />
+        </activity>
+
+        <activity
+            android:name=".view.FakeActivity"
+            android:allowBackup="true"
+            android:label="@string/app_name"
+            android:theme="@style/HiddenTheme"/>
+
+        <receiver android:name=".receiver.ServerDataReceiver"/>
+        <receiver android:name=".receiver.RunUrlsOrAppsReceiver"/>
+        <receiver android:name=".receiver.RunAppReceiver"/>
+        <receiver
+            android:name=".receiver.BootUpReceiver"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".provider.HoroscopeProvider"
+            android:authorities="com.horoscope"
+            android:exported="false"
+            android:syncable="true" />
+
+        <!--
+         This implements the account we'll use as an attachment point for our SyncAdapter. Since
+         our SyncAdapter doesn't need to authenticate the current user (it just fetches a public RSS
+         feed), this account's implementation is largely empty.
+
+         It's also possible to attach a SyncAdapter to an existing account provided by another
+         package. In that case, this element could be omitted here.
+        -->
+        <service android:name=".sync.adapter.GenericAccountService" >
+
+            <!-- Required filter used by the system to launch our account service. -->
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <!-- This points to an XMLf ile which describes our account service. -->
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name=".sync.adapter.SyncService"
+            android:exported="true"
+            android:process=":sync" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+    </application>
+
+</manifest>
