@@ -1,4 +1,4 @@
-package com.horoscope.view;
+﻿package com.horoscope.view;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -43,7 +43,7 @@ import static com.horoscope.util.HoroscopeSigns.SCORPIO;
 import static com.horoscope.util.HoroscopeSigns.TAURUS;
 import static com.horoscope.util.HoroscopeSigns.VIRGO;
 import static com.horoscope.view.ForecastActivity.ZODIAC_SIGN;
-
+//test
 
 public class AllSignsActivity extends ActionBarActivity {
     public static final int INTERVAL = 86400000; // one day in millis
